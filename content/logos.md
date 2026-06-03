@@ -20,8 +20,22 @@ Important:
 
 | File | Role | Recommended Use |
 |---|---|---|
-| `assets/logo/logo.png` | Primary logo | Header, main branding, footer |
-| `assets/logo/logo-square-fit.png` | Square/compact logo | Favicon, app icon, mobile/compact areas |
+| `assets/logo/logo.png` | Primary logo | Hero section, social preview |
+| `assets/logo/logo-square-fit.png` | Square/compact logo | App icon source (`apple-touch-icon`), social media profile image |
+| `assets/logo/favicon-p.png` | Favicon — 64×64 "P" mark | Browser tab favicon (64 px), privacy-policy header P icon |
+| `assets/logo/favicon-p-32.png` | Favicon — 32×32 "P" mark | Browser tab favicon (32 px) |
+| `assets/logo/logo-footer.png` | Footer logo — background-matched | Footer branding only |
+| `assets/logo/logo-mark.png` | Header logo — tiny phone | index.html header at ≤360px (P mark variant) |
+| `assets/logo/logo-mobile.png` | Header logo — mobile/tablet | index.html header at ≤1023px |
+| `assets/logo/logo-one-line-header.png` | Header logo — desktop | index.html header at >1023px (default) |
+
+### How derived assets were created
+
+**`favicon-p.png` / `favicon-p-32.png`**
+Extracted from `logo-square-fit.png` using Python/Pillow. The stylized "P" mark was located at pixel bounds approximately top=216, bottom=308, left=303, right=404 in the 703×708 source image. A 160×160 crop centered on the P was padded with the header/footer background color `#1E1F1C` (rgb 30,31,28) and resized to 64×64 and 32×32 respectively. Reason: the full circle logo is too detailed to be legible at favicon sizes.
+
+**`logo-footer.png`**
+Created from `logo-square-fit.png` using Python/Pillow pixel shifting. The source file's background was `#121314` (rgb 18,19,20), which did not match the footer background `#1E1F1C` (rgb 30,31,28). Every pixel was shifted by `+12R, +12G, +8B`; white content pixels clamp unchanged. The result exactly matches the footer background so the logo appears seamlessly embedded.
 
 ---
 
@@ -31,27 +45,16 @@ File:
 `assets/logo/logo.png`
 
 Recommended use:
-- Main website header
 - Hero section if needed
-- Footer branding
-- Desktop navigation
-- Main company identity placement
 - Social preview image base if it fits the layout
 
 Suggested role:
-Primary brand logo
+Primary brand logo (not used in header or footer — see sections below)
 
 Suggested alt text:
 Pro Seal Solutions Inc. logo
 
-Suggested image label:
-Primary logo
-
 Implementation notes:
-- Use this as the default logo for the website.
-- Use it in the header unless it is too wide for the layout.
-- Check that it remains readable on light backgrounds.
-- Check that it remains readable on dark or footer backgrounds.
 - If the logo has a transparent background, preserve transparency.
 - Do not stretch, squash, crop, or distort the logo.
 - Maintain original aspect ratio.
@@ -59,74 +62,81 @@ Implementation notes:
 - Do not use this logo as a project/gallery image.
 - Do not use this logo as a background pattern.
 
-Recommended HTML usage:
-
-```html
-<img 
-  src="/assets/logo/logo.png" 
-  alt="Pro Seal Solutions Inc. logo" 
-/>
-```
-
-Alternative accessible usage when the company name appears as visible text beside the logo:
-
-```html
-<img 
-  src="/assets/logo/logo.png" 
-  alt="" 
-  aria-hidden="true" 
-/>
-```
-
-Use empty alt text only when “Pro Seal Solutions Inc.” is already visible as real text near the logo.
-
 ---
 
-## Primary Logo Usage by Website Area
+## Logo Usage by Website Area
 
 ### Header
 
-Preferred file:
-`assets/logo/logo.png`
+**index.html** uses a responsive `<picture>` element with three purpose-built
+image variants. The `.site-logo` anchor wraps the `<picture>`; `.site-logo__img`
+controls height.
 
-Usage:
-- Place the logo on the left side of the header.
-- Link the logo to the top of the homepage.
-- Keep it visible and readable on mobile.
-- Keep enough space for the phone CTA and quote CTA.
-- Do not make the logo so large that it pushes contact actions below the fold.
+```html
+<a href=”#” class=”site-logo” aria-label=”Pro Seal Solutions Inc. — Home”>
+  <picture>
+    <source media=”(max-width: 360px)” srcset=”/assets/logo/logo-mark.png” width=”300” height=”188”>
+    <source media=”(max-width: 1023px)” srcset=”/assets/logo/logo-mobile.png” width=”1275” height=”188”>
+    <img class=”site-logo__img” src=”/assets/logo/logo-one-line-header.png”
+         alt=”” aria-hidden=”true” width=”1814” height=”188”>
+  </picture>
+</a>
+```
 
-Suggested alt text:
-Pro Seal Solutions Inc. logo
+| Breakpoint | File served | Display height |
+|---|---|---|
+| ≤360px | `logo-mark.png` | 34px |
+| ≤768px | `logo-mobile.png` | 36px |
+| ≤1023px | `logo-mobile.png` | 40px |
+| >1023px | `logo-one-line-header.png` | 44px |
+
+**privacy-policy.html** retains the text-based logo approach (P icon +
+HTML text spans with Montserrat):
+
+```html
+<a href=”/” class=”site-logo” aria-label=”Pro Seal Solutions Inc.”>
+  <img class=”site-logo__mark” src=”/assets/logo/favicon-p.png” alt=”” aria-hidden=”true”>
+  <span class=”site-logo__main”>RO SEAL SOLUTIONS INC.</span>
+  <span class=”site-logo__tagline”>CONCRETE AND EPOXY</span>
+</a>
+```
+
+Notes:
+- Montserrat (Google Fonts, weights 300/500/700/800) is loaded on both pages
+  because `privacy-policy.html` requires it for the text logo.
+- The three header image files (`logo-mark.png`, `logo-mobile.png`,
+  `logo-one-line-header.png`) must only be used in the header `<picture>`.
+- `favicon-p.png` is no longer used as the header P icon in `index.html`.
 
 ### Hero Section
 
-Preferred file:
-`assets/logo/logo.png`
+Preferred file: `assets/logo/logo.png`
 
-Usage:
-- Optional if the logo is already visible in the header.
-- Avoid repeating the logo too many times above the fold.
-- Prioritize the headline, service message, and quote button.
-
-Suggested alt text:
-Pro Seal Solutions Inc. logo
+Usage: Optional if the logo is already visible in the header. Prioritize the headline, service message, and quote button.
 
 ### Footer
 
-Preferred file:
-`assets/logo/logo.png`
+Preferred file: `assets/logo/logo-footer.png`
 
-Alternative:
-`assets/logo/logo-square-fit.png`
+**Do not use** `logo.png`, `logo-square-fit.png`, or `favicon-p.png` in the footer.
 
 Usage:
-- Use whichever version is more readable on the footer background.
-- If the footer uses a dark graphite background, confirm that the logo has enough contrast.
-- If contrast is poor, use the company name as text instead of forcing the logo.
+- Display at `height: 190px; width: auto` on desktop inside a flex row alongside the company description paragraph.
+- On mobile (≤768px) the brand section switches to `flex-direction: column` and the logo shrinks to `130px` (≤380px: `100px`).
+- `logo-footer.png` has its background pre-matched to the footer color `#1E1F1C`. It must not be used on any other background.
+- `.footer-brand` layout: `display: flex; align-items: center; gap: 1.75rem` (desktop); `flex-direction: column; align-items: flex-start; gap: 1rem` on mobile.
+- Description text appears to the right of the logo on desktop with `font-size: .875rem; color: rgba(244,241,236,.55); max-width: 280px`. On mobile the `max-width` is removed and text fills the full column.
 
-Suggested alt text:
-Pro Seal Solutions Inc. logo
+Suggested alt text: `Pro Seal Solutions Inc. logo`
+
+```html
+<div class=”footer-brand”>
+  <a href=”/” aria-label=”Pro Seal Solutions Inc. — go to homepage” class=”footer-logo-link”>
+    <img src=”/assets/logo/logo-footer.png” alt=”Pro Seal Solutions Inc. logo” width=”703” height=”708”>
+  </a>
+  <p>Epoxy flooring, concrete coatings, repair, resurfacing, self-leveling, and surface preparation services in Calgary, Alberta and surrounding areas.</p>
+</div>
+```
 
 ---
 
@@ -208,26 +218,21 @@ Pro Seal Solutions Inc. square logo
 
 ### Favicon / App Icons
 
-Preferred source:
-`assets/logo/logo-square-fit.png`
+**Current implementation (finalized):**
 
-Recommended generated files:
-- `favicon.ico`
-- `favicon-32x32.png`
-- `favicon-16x16.png`
-- `apple-touch-icon.png`
-- `android-chrome-192x192.png`
-- `android-chrome-512x512.png`
+```html
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/logo/favicon-p.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo/favicon-p-32.png">
+<link rel="apple-touch-icon" href="/assets/logo/logo-square-fit.png">
+```
+
+- `favicon-p.png` (64×64) and `favicon-p-32.png` (32×32): extracted "P" mark, background `#1E1F1C`
+- `logo-square-fit.png`: used only for `apple-touch-icon` (180×180 display, full circle logo)
+- The full square logo is NOT used as the browser-tab favicon because it is too detailed at small sizes.
 
 Implementation notes:
-- Generate favicon/app icons from the square logo if it is readable at small sizes.
-- If the square logo is too detailed, create a simplified icon version.
-- Do not use the wide logo as a favicon source unless it remains readable when cropped.
-- Test the icon on light and dark browser/tab backgrounds.
-- Keep the favicon simple and recognizable at small sizes.
-
-Suggested favicon source:
-`assets/logo/logo-square-fit.png`
+- Do not replace `favicon-p.png` with `logo-square-fit.png` as the primary favicon.
+- If a new favicon is needed in the future, extract the P mark from the updated source logo and recreate using the same Python/Pillow process.
 
 ### Social Media Profile Image
 
@@ -335,20 +340,34 @@ This prevents screen readers from reading the company name twice.
 # Logo Usage Rules for AI Agent
 
 Use:
-- `assets/logo/logo.png` as the main/default website logo.
-- `assets/logo/logo-square-fit.png` for compact, favicon, app icon, profile image, or square-format placements.
+- `assets/logo/logo-one-line-header.png` — index.html header, desktop (>1023px)
+- `assets/logo/logo-mobile.png` — index.html header, mobile/tablet (≤1023px)
+- `assets/logo/logo-mark.png` — index.html header, tiny phone (≤360px)
+- `assets/logo/favicon-p.png` — privacy-policy.html header P icon; browser favicon (64 px)
+- `assets/logo/favicon-p-32.png` — browser favicon (32 px)
+- `assets/logo/logo-footer.png` — footer logo only (190 px desktop / 130 px tablet-phone / 100 px tiny phone, background `#1E1F1C`)
+- `assets/logo/logo-square-fit.png` — `apple-touch-icon` only; social media profile image
+- `assets/logo/logo.png` — hero section, social preview
 
 Do not:
+- Use `logo.png` or `logo-square-fit.png` in the header.
+- Use the header image files (`logo-mark.png`, `logo-mobile.png`, `logo-one-line-header.png`) outside the header `<picture>` element.
+- Use `logo-square-fit.png` as the footer logo — use `logo-footer.png` instead.
+- Use `logo-footer.png` on any background other than `#1E1F1C` (it was pixel-shifted to match that exact color).
+- Use `logo.png` or `logo-square-fit.png` as the browser tab favicon — use the `favicon-p` files.
 - Treat logo files as project/gallery images.
 - Display logo files in the projects gallery.
 - Rename the company.
 - Recreate or redesign the logo unless explicitly requested.
-- Stretch, squash, crop, or distort the logo.
-- Use the square logo as the primary header logo unless the regular logo does not fit.
-- Use the logo as a background pattern.
-- Use the logo instead of real project photos.
-- Describe the logo as epoxy flooring, concrete coating, or restoration work.
+- Stretch, squash, crop, or distort any logo file.
+- Use any logo as a background pattern.
+- Use any logo instead of real project photos.
+- Describe any logo as epoxy flooring, concrete coating, or restoration work.
 
-Final decision rule:
-- Use `logo.png` when there is enough horizontal space.
-- Use `logo-square-fit.png` when the layout requires a compact or square image.
+Final decision rule by placement:
+- index.html header: `<picture>` with `logo-one-line-header.png` (desktop) / `logo-mobile.png` (≤1023px) / `logo-mark.png` (≤360px)
+- privacy-policy.html header: text logo with `favicon-p.png` P icon + Montserrat text spans
+- Footer: `logo-footer.png` at 190 px (desktop); 130 px (≤768 px); 100 px (≤380 px)
+- Browser favicon: `favicon-p.png` (64 px) + `favicon-p-32.png` (32 px)
+- Apple touch icon: `logo-square-fit.png`
+- Social / OG preview: `logo.png` or compose a dedicated OG image

@@ -1029,3 +1029,46 @@ Before launch, verify:
 - [ ] The website does not include a large unoptimized gallery.
 - [ ] The site remains simple, fast, and easy to maintain.
 
+---
+
+## Brand Asset Processing (Post-MVP)
+
+The following branding image assets were generated programmatically using Python/Pillow. They must not be replaced by the raw source files.
+
+### Favicon extraction — `favicon-p.png` and `favicon-p-32.png`
+
+**Source:** `assets/logo/logo-square-fit.png` (703×708 px)
+
+**Method:** Python/Pillow pixel scan. The stylized "P" mark was located in the upper inner region of the circle (scan area y: 120–370, x: 200–520) by detecting bright white pixels. Bounding box found at approximately top=216, bottom=308, left=303, right=404. A 160×160 crop was taken centered on the P (center x=353, y=262), composited onto a solid `#1E1F1C` background, then resized to 64×64 and 32×32.
+
+**Why:** The full circle logo is too visually complex to be legible at favicon sizes (32×32 and below). Isolating the P mark produces a clean, recognizable favicon.
+
+**Background color:** `#1E1F1C` (rgb 30,31,28) — matches the site header/footer dark background so the favicon looks consistent when the browser tab uses a dark theme.
+
+**Output files:**
+- `src/assets/logo/favicon-p.png` — 64×64 px
+- `src/assets/logo/favicon-p-32.png` — 32×32 px
+
+**HTML usage (both `index.html` and `privacy-policy.html`):**
+```html
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/logo/favicon-p.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/logo/favicon-p-32.png">
+<link rel="apple-touch-icon" href="/assets/logo/logo-square-fit.png">
+```
+
+### Footer logo background match — `logo-footer.png`
+
+**Source:** `assets/logo/logo-square-fit.png` (703×708 px)
+
+**Problem:** The source file’s background was `#121314` (rgb 18,19,20). The site footer background is `#1E1F1C` (rgb 30,31,28). Displaying the logo directly in the footer produced a visible dark rectangle around the circle.
+
+**Method:** Python/Pillow pixel-by-pixel shift. Every pixel was shifted by `+12R, +12G, +8B`. White and near-white content pixels clamp to 255 unchanged. Dark background pixels shift from rgb(18,19,20) to rgb(30,31,28) exactly.
+
+**Formula:** `new_r = min(r + 12, 255)`, `new_g = min(g + 12, 255)`, `new_b = min(b + 8, 255)`
+
+**Output file:** `src/assets/logo/logo-footer.png` — 703×708 px
+
+**Constraint:** `logo-footer.png` must only be used on `#1E1F1C` backgrounds. Using it on any other background will expose the shifted colors. Do not use it in the header, hero section, or any light-background area.
+
+**Display size:** `height: 190px; width: auto` on desktop. Responsive heights: 130px (≤768px), 100px (≤380px). See §18.7 of the PRD for full breakpoint table.
+

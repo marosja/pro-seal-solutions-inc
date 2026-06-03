@@ -4,6 +4,8 @@ Items that must be completed before the website goes live.
 
 ## Required before deploying to production
 
+- [x] **Favicon generated** — `favicon-p.png` (64×64) and `favicon-p-32.png` (32×32) extracted from `logo-square-fit.png` using Python/Pillow. Both files exist in `src/assets/logo/`. HTML updated in both `index.html` and `privacy-policy.html`. `logo-footer.png` also generated with background matched to `#1E1F1C`.
+
 - [ ] **Replace Turnstile test key** — In `src/index.html`, replace the placeholder sitekey `1x00000000000000000000AA` in the `<div class="cf-turnstile">` widget with the real production sitekey from the Cloudflare Turnstile dashboard.
 
 - [ ] **Set Cloudflare Pages environment variables** — In the Cloudflare Pages project settings, add the following environment variables:

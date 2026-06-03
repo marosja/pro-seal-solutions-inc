@@ -549,3 +549,159 @@ Out of scope for MVP
 - Complex quote calculator.
 - Large unoptimized gallery.
 - Heavy animations or video backgrounds.
+
+---
+
+## 18. Post-MVP Improvements (Applied)
+
+The following improvements were applied after the initial MVP build.
+All are must-have going forward and must be maintained in future updates.
+
+### 18.1 Favicon — Extracted "P" Mark
+
+**Change:** Extracted the stylized "P" mark from `logo-square-fit.png` using
+Python/Pillow and saved as dedicated favicon files:
+
+- `assets/logo/favicon-p.png` (64×64 px)
+- `assets/logo/favicon-p-32.png` (32×32 px)
+
+**Reasoning:** The full circle logo was too detailed at small browser-tab
+sizes. The isolated "P" mark is more legible and recognizable as a favicon.
+
+**HTML:** Both `index.html` and `privacy-policy.html` use `favicon-p.png`
+(64 px) and `favicon-p-32.png` (32 px); `logo-square-fit.png` is kept for
+`apple-touch-icon`.
+
+### 18.2 Header — Responsive `<picture>` Logo (index.html)
+
+**Change:** Replaced the `<img src="logo.png">` in the header of `index.html`
+with a responsive `<picture>` element serving three purpose-built logo variants
+based on viewport width:
+
+```html
+<a href="#" class="site-logo" aria-label="Pro Seal Solutions Inc. — Home">
+  <picture>
+    <source media="(max-width: 360px)" srcset="/assets/logo/logo-mark.png" width="300" height="188">
+    <source media="(max-width: 1023px)" srcset="/assets/logo/logo-mobile.png" width="1275" height="188">
+    <img class="site-logo__img" src="/assets/logo/logo-one-line-header.png"
+         alt="" aria-hidden="true" width="1814" height="188">
+  </picture>
+</a>
+```
+
+**Logo files used:**
+
+| File | Dimensions | Served at |
+|---|---|---|
+| `logo-mark.png` | 300×188 | ≤360px (tiny phones — P mark only) |
+| `logo-mobile.png` | 1275×188 | ≤1023px (mobile / tablet) |
+| `logo-one-line-header.png` | 1814×188 | >1023px (desktop default) |
+
+**CSS:** `.site-logo` is an `inline-flex` anchor; `.site-logo__img` controls
+height. Responsive heights: 44px (default), 40px (≤1023px), 36px (≤768px),
+34px (≤380px).
+
+**Privacy policy page:** `privacy-policy.html` retains the text-based logo
+approach (P icon from `favicon-p.png` + HTML text spans styled with Montserrat).
+Montserrat is therefore still loaded on both pages.
+
+### 18.3 Header — Navigation Layout and Phone Alignment
+
+**Change:** `#main-nav` was given `flex: 1; display: flex; align-items: center;
+justify-content: flex-end; gap: 1.875rem`. `.header-phone` remains inside
+`<nav id="main-nav">` as the last flex item. Both `.nav-list` and
+`.header-phone` are right-aligned within the flex nav, visually separating
+the phone from the nav links via flex gap.
+
+**Phone icon** size updated from 15px to 16px.
+
+**Reasoning:** The nav fills all remaining header width (`flex: 1`) and
+right-aligns its children, giving the phone a distinct position at the far
+right without moving it outside the nav element.
+
+**Mobile:** Unchanged — the phone appears in the mobile overlay below the
+nav items when the hamburger menu opens.
+
+### 18.4 Navigation — Correct Scroll Order
+
+**Change:** Reordered nav links to match the actual top-to-bottom page order:
+
+| Before | After |
+|--------|-------|
+| Services | Services |
+| **Projects** | **About** |
+| **About** | **Projects** |
+| Get a Quote | Get a Quote |
+
+Applied to both `index.html` and `privacy-policy.html`.
+
+### 18.5 Gallery — Removed Hover Zoom on Images
+
+**Change:** Removed the `transform: scale(1.05)` zoom effect that triggered
+when hovering over gallery photos. The `transition: transform .4s ease` on
+`.gallery-item img` was also removed since it is no longer needed.
+
+**Retained:** The caption slide-up effect (`figcaption.project-caption`)
+on hover is unchanged — text still pops up at the bottom of the image.
+
+**Reasoning:** The zoom animation looked unpolished and caused visual noise
+in the gallery grid.
+
+### 18.6 Footer — Logo, Grid Layout, and Brand Redesign
+
+**Change:**
+
+- Swapped footer logo from `logo.png` to `logo-footer.png` — a
+  background-matched version of `logo-square-fit.png` whose pixels were
+  shifted to exactly match footer color `#1E1F1C`, eliminating the visible
+  dark rectangle around the circle.
+- Footer grid changed from `grid-template-columns: 2fr 1fr 1fr` (three
+  columns) to `grid-template-columns: 2fr 1fr` (two columns). The Navigation
+  and Contact columns are now wrapped in a `.footer-right` flex div
+  (`display: flex; gap: 4rem; align-items: flex-start`).
+- Changed `.footer-brand` layout from stacked (column) to side-by-side (row)
+  using `display: flex; align-items: center; gap: 1.75rem`.
+- Added `.footer-logo-link` class to the logo anchor inside `.footer-brand`.
+
+**Reasoning:** `logo-footer.png` blends seamlessly into the dark footer
+background. The two-column grid with `.footer-right` wrapper provides better
+visual grouping of navigation and contact information.
+
+### 18.7 Footer — Logo Size, Text Width, Navigation Spacing, and Mobile Layout
+
+**Changes applied:**
+
+- **Logo height increased** from 140 px to 190 px (desktop/laptop). Logo text is now legible on laptop screens.
+- **Description text capped** at `max-width: 280px` on desktop — approximately 40% narrower than the unconstrained width it previously filled in the `2fr` column.
+- **Navigation ↔ Contact gap** in `.footer-right` increased from `2rem` to `4rem` — adds clear visual separation between the two footer link columns.
+- **Mobile footer stacking** (≤768px): `.footer-brand` now switches to `flex-direction: column; align-items: flex-start` so the logo sits above the description text instead of beside it. Logo height is `130px` on tablets/large phones, `100px` on tiny phones (≤380px). The `max-width` constraint on the description is removed on mobile so text fills the full column width.
+- **Navigation ↔ Contact gap on mobile** reduced to `2.5rem` at ≤768px and `1.25rem` at ≤380px to fit narrower viewports.
+- **Nav/Contact columns already stack** (column direction) at ≤580px via the pre-existing breakpoint — no change needed there.
+
+**Responsive breakpoints summary for footer:**
+
+| Breakpoint | Logo height | Brand layout | Footer-right gap |
+|---|---|---|---|
+| Default (desktop) | 190 px | row (side-by-side) | 4 rem |
+| ≤1024 px (tablet landscape) | 190 px | row | 4 rem |
+| ≤768 px (tablet portrait / large phone) | 130 px | column (stacked) | 2.5 rem |
+| ≤580 px (standard phone) | 130 px | column (stacked) | 1.5 rem; nav+contact stacked |
+| ≤380 px (tiny phone) | 100 px | column (stacked) | 1.25 rem |
+
+**Reasoning:** The footer logo text was unreadable at 140 px on a 1080p laptop. The description text was too wide and drew the eye away from the nav/contact links. On mobile the side-by-side brand layout left the text with only ~140 px of space on a 375 px phone, making it wrap into many short lines.
+
+### 18.8 Header Logo — New Responsive Image Assets
+
+Three new logo image files were added to `src/assets/logo/` to support the
+responsive `<picture>` header implementation in `index.html` (see §18.2):
+
+| File | Dimensions | Purpose |
+|---|---|---|
+| `logo-mark.png` | 300×188 px | Tiny-phone header (≤360px) — P mark only |
+| `logo-mobile.png` | 1275×188 px | Mobile/tablet header (≤1023px) |
+| `logo-one-line-header.png` | 1814×188 px | Desktop header (>1023px, default) |
+
+All three are horizontal-format logo exports (aspect ratio ≈ 1.6:1 to 9.6:1)
+designed to render cleanly at the header image heights (44px → 34px depending
+on breakpoint). These files must only be used inside the header `<picture>`
+element — not in the footer, gallery, or hero section.
